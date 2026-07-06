@@ -1,15 +1,18 @@
 import { createClient } from "@supabase/supabase-js"
 
-const url = import.meta.env.VITE_SUPABASE_URL as string
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+// The publishable (anon) key is safe to ship in the browser — access is guarded
+// by Row Level Security. These fallbacks let the app run on any host (e.g.
+// Vercel) even before environment variables are configured. To point the app at
+// a different Supabase project, set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+// (in .env locally, or in the Vercel project's Environment Variables).
+const FALLBACK_URL = "https://ngduugznnvpacpmkpaok.supabase.co"
+const FALLBACK_ANON_KEY = "sb_publishable_INmFtuSKsyczJHXG8QWtbQ_sI5uP1_b"
 
-if (!url || !anonKey) {
-  // eslint-disable-next-line no-console
-  console.warn(
-    "[FunkVault] Missing Supabase env vars. Copy .env.example to .env and fill in " +
-      "VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (the publishable key).",
-  )
-}
+const url =
+  (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim() || FALLBACK_URL
+const anonKey =
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
+  FALLBACK_ANON_KEY
 
 /** Browser Supabase client. Uses the PUBLISHABLE (anon) key only. */
 export const supabase = createClient(url, anonKey, {

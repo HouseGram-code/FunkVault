@@ -1,6 +1,6 @@
 import { useI18n } from "../i18n"
 import type { Lang } from "../i18n"
-import { FiX, FiGlobe, FiCheck, FiLogOut } from "./icons"
+import { FiX, FiGlobe, FiCheck, FiLogOut, FiZap } from "./icons"
 
 interface SettingsModalProps {
   onClose: () => void
@@ -57,6 +57,15 @@ export function SettingsModal({
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="set-section">
+          <div className="set-section-title">
+            <FiZap size={17} /> {t("about")}
+          </div>
+          <p className="set-version">
+            FunkVault <span className="set-ver-badge">{t("version")}</span>
+          </p>
         </div>
 
         <button className="set-logout" type="button" onClick={onLogout}>

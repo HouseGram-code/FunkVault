@@ -1763,3 +1763,27 @@ svg { display: block; }
   .section-head h3 { font-size: 20px; }
   .composer .field textarea { font-size: 16px; }
 }
+
+/* ============================================================
+   Settings — version / about
+   ============================================================ */
+.set-version {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+.set-ver-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.14);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}

@@ -192,6 +192,10 @@ const EN: Dict = {
   admin_protected: "Protected",
   admin_ban: "Ban",
   admin_unban: "Unban",
+
+  // Settings / about
+  about: "About",
+  version: "v1.0 beta",
 }
 
 const RU: Dict = {
@@ -366,6 +370,10 @@ const RU: Dict = {
   admin_protected: "Защищён",
   admin_ban: "Забанить",
   admin_unban: "Разбанить",
+
+  // Settings / about
+  about: "О приложении",
+  version: "v1.0 бета",
 }
 
 const DICTS: Record<Lang, Dict> = { en: EN, ru: RU }
