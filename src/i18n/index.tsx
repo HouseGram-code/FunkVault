@@ -196,6 +196,55 @@ const EN: Dict = {
   // Settings / about
   about: "About",
   version: "v1.0 beta",
+
+  // Updates
+  upd_section: "Updates",
+  upd_current: "Current version",
+  upd_check: "Check for updates",
+  upd_checking: "Checking\u2026",
+  upd_latest: "You have the latest version.",
+  upd_available: "Update available",
+  upd_available_body: "Version {v} is ready. Open Settings to update.",
+  upd_update_now: "Update now",
+  upd_updating: "Updating\u2026",
+  upd_downloading: "Downloading update\u2026",
+  upd_size: "Download size",
+  upd_whatsnew: "What's new",
+  upd_added: "Added",
+  upd_fixed: "Fixed",
+  upd_empty: "Update",
+  upd_reload_note: "The app will reload automatically after updating.",
+  mb: "MB",
+
+  // Rules
+  rules: "Rules",
+  rules_sub: "FunkVault community guidelines",
+  rules_foot: "Breaking the rules may get your videos removed or your account banned.",
+  rule_1: "Be respectful \u2014 no harassment, hate speech or bullying.",
+  rule_2: "Upload only Friday Night Funkin' content you have the right to share.",
+  rule_3: "No NSFW, shocking or illegal material.",
+  rule_4: "No spam, scams or misleading titles and thumbnails.",
+  rule_5: "Credit mod and song authors when uploading their work.",
+
+  // Notifications
+  notifs: "Notifications",
+  notifs_empty: "No notifications yet",
+  notifs_clear: "Clear all",
+  notifs_mark: "Mark all read",
+  notif_enable: "Enable browser notifications",
+  just_now: "just now",
+
+  // Uploads (background)
+  up_started: "Upload started",
+  up_started_body: "\u201c{title}\u201d is uploading. You can keep browsing.",
+  up_done: "Video uploaded",
+  up_done_body: "\u201c{title}\u201d is now live on your channel.",
+  up_failed: "Upload failed",
+  up_failed_body: "\u201c{title}\u201d could not be uploaded. Please try again.",
+  up_toobig: "File too large",
+  up_toobig_body: "Videos must be 250 MB or smaller.",
+  up_uploading_chip: "Uploading",
+  up_limit_hint: "Up to 250 MB",
 }
 
 const RU: Dict = {
@@ -374,6 +423,55 @@ const RU: Dict = {
   // Settings / about
   about: "О приложении",
   version: "v1.0 бета",
+
+  // Обновления
+  upd_section: "Обновления",
+  upd_current: "Текущая версия",
+  upd_check: "Проверить обновления",
+  upd_checking: "Проверяем\u2026",
+  upd_latest: "У вас последняя версия.",
+  upd_available: "Доступно обновление",
+  upd_available_body: "Версия {v} готова. Откройте настройки, чтобы обновить.",
+  upd_update_now: "Обновить",
+  upd_updating: "Обновление\u2026",
+  upd_downloading: "Загрузка обновления\u2026",
+  upd_size: "Размер загрузки",
+  upd_whatsnew: "Что нового",
+  upd_added: "Добавлено",
+  upd_fixed: "Исправлено",
+  upd_empty: "обновление",
+  upd_reload_note: "После обновления сайт перезагрузится автоматически.",
+  mb: "МБ",
+
+  // Правила
+  rules: "Правила",
+  rules_sub: "Правила сообщества FunkVault",
+  rules_foot: "Нарушение правил может привести к удалению видео или блокировке аккаунта.",
+  rule_1: "Уважайте других — никаких оскорблений, травли и разжигания ненависти.",
+  rule_2: "Загружайте только контент по Friday Night Funkin', на который у вас есть права.",
+  rule_3: "Запрещены материалы 18+, шок-контент и незаконное содержимое.",
+  rule_4: "Никакого спама, обмана и вводящих в заблуждение названий или обложек.",
+  rule_5: "Указывайте авторов модов и песен при загрузке их работ.",
+
+  // Уведомления
+  notifs: "Уведомления",
+  notifs_empty: "Уведомлений пока нет",
+  notifs_clear: "Очистить всё",
+  notifs_mark: "Отметить прочитанным",
+  notif_enable: "Включить уведомления браузера",
+  just_now: "только что",
+
+  // Загрузки (в фоне)
+  up_started: "Загрузка началась",
+  up_started_body: "«{title}» загружается. Можно продолжать пользоваться сайтом.",
+  up_done: "Видео загружено",
+  up_done_body: "«{title}» опубликовано на вашем канале.",
+  up_failed: "Не удалось загрузить",
+  up_failed_body: "Не удалось загрузить «{title}». Попробуйте ещё раз.",
+  up_toobig: "Файл слишком большой",
+  up_toobig_body: "Видео должно быть не больше 250 МБ.",
+  up_uploading_chip: "Загрузка",
+  up_limit_hint: "До 250 МБ",
 }
 
 const DICTS: Record<Lang, Dict> = { en: EN, ru: RU }

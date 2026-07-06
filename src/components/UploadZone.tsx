@@ -1,5 +1,6 @@
 import { useRef, useState } from "react"
 import { FiUploadCloud, FiFolder } from "./icons"
+import { useI18n } from "../i18n"
 
 interface UploadZoneProps {
   onFiles: (files: FileList | File[]) => void
@@ -7,6 +8,7 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ onFiles, busy }: UploadZoneProps) {
+  const { t } = useI18n()
   const inputRef = useRef<HTMLInputElement>(null)
   const [drag, setDrag] = useState(false)
 
@@ -34,11 +36,8 @@ export function UploadZone({ onFiles, busy }: UploadZoneProps) {
       </div>
 
       <div className="dz-body">
-        <h2>{busy ? "Loading your video..." : "Drop a video to upload"}</h2>
-        <p>
-          Drag &amp; drop an MP4, WebM or MOV here, or browse your files. We grab
-          a thumbnail automatically and drop it straight into your vault.
-        </p>
+        <h2>{busy ? t("dz_loading") : t("dz_title")}</h2>
+        <p>{t("dz_body")}</p>
         <div className="dz-actions">
           <button
             className="dz-pick"
@@ -46,10 +45,11 @@ export function UploadZone({ onFiles, busy }: UploadZoneProps) {
             onClick={() => inputRef.current?.click()}
             disabled={busy}
           >
-            <FiFolder size={17} /> Select video
+            <FiFolder size={17} /> {t("dz_pick")}
           </button>
-          <span className="dz-hint">or drop it anywhere in this box</span>
+          <span className="dz-hint">{t("dz_hint")}</span>
         </div>
+        <span className="dz-limit">{t("up_limit_hint")}</span>
       </div>
 
       <input

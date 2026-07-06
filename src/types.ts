@@ -73,3 +73,4 @@ export type Tab =
   | "subs"
   | "library"
   | "liked"
+  | "rules"

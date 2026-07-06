@@ -12,7 +12,14 @@ import { CreateChannelModal } from "./components/CreateChannelModal"
 import { SettingsModal } from "./components/SettingsModal"
 import { AdminPanel } from "./components/AdminPanel"
 import { MobileNav } from "./components/MobileNav"
+import { Toasts } from "./components/Toasts"
+import { NotificationsPanel } from "./components/NotificationsPanel"
+import { UploadStatus } from "./components/UploadStatus"
+import type { UploadState } from "./components/UploadStatus"
+import { RulesPage } from "./components/RulesPage"
 import { Arrows } from "./components/Arrows"
+import { useNotifications } from "./lib/notifications"
+import { checkForUpdate } from "./lib/update"
 import * as api from "./lib/api"
 import type { ChannelEdit, UploadMeta } from "./lib/api"
 import { getSession, clearSession, refreshAccount } from "./lib/auth"
@@ -34,6 +41,7 @@ type MyChannel = { id: string; name: string; avatar?: string } | null
 
 export default function App() {
   const { t } = useI18n()
+  const { notify, unread } = useNotifications()
 
   const [account, setAccount] = useState<Account | null>(() => getSession())
 
@@ -59,10 +67,11 @@ export default function App() {
   // modals / flows
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
+  const [notifsOpen, setNotifsOpen] = useState(false)
   const [createChannelOpen, setCreateChannelOpen] = useState(false)
   const [uploadQueue, setUploadQueue] = useState<File[]>([])
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
-  const [publishing, setPublishing] = useState(false)
+  const [uploading, setUploading] = useState<UploadState | null>(null)
 
   const uploadRef = useRef<HTMLInputElement>(null)
 
@@ -115,6 +124,41 @@ export default function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Warn before closing the tab while an upload is still in progress.
+  useEffect(() => {
+    if (!uploading || uploading.done) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.returnValue = ""
+    }
+    window.addEventListener("beforeunload", handler)
+    return () => window.removeEventListener("beforeunload", handler)
+  }, [uploading])
+
+  // Poll the published version.json so a new deploy is detected for everyone.
+  useEffect(() => {
+    let alive = true
+    let lastSeen = ""
+    const run = async () => {
+      const info = await checkForUpdate()
+      if (!alive || !info || !info.hasUpdate) return
+      if (lastSeen === info.remote) return
+      lastSeen = info.remote
+      notify({
+        kind: "update",
+        title: t("upd_available"),
+        body: t("upd_available_body", { v: info.remote }),
+        system: true,
+      })
+    }
+    void run()
+    const id = window.setInterval(run, 60000)
+    return () => {
+      alive = false
+      window.clearInterval(id)
+    }
+  }, [notify, t])
 
   // ---- channel navigation ---------------------------------------------------
   const openChannel = useCallback(async (channelId: string) => {
@@ -197,7 +241,17 @@ export default function App() {
   // ---- uploads --------------------------------------------------------------
   const handleFiles = useCallback(
     (files: FileList | File[]) => {
-      const list = Array.from(files).filter((f) => f.type.startsWith("video/"))
+      const vids = Array.from(files).filter((f) => f.type.startsWith("video/"))
+      if (!vids.length) return
+      const MAX = 250 * 1024 * 1024
+      const list = vids.filter((f) => f.size <= MAX)
+      if (list.length < vids.length) {
+        notify({
+          kind: "error",
+          title: t("up_toobig"),
+          body: t("up_toobig_body"),
+        })
+      }
       if (!list.length) return
       if (!myChannel) {
         setPendingFiles(list)
@@ -206,7 +260,7 @@ export default function App() {
       }
       setUploadQueue((q) => [...q, ...list])
     },
-    [myChannel],
+    [myChannel, notify, t],
   )
 
   const triggerUpload = () => uploadRef.current?.click()
@@ -215,26 +269,57 @@ export default function App() {
     async (meta: UploadMeta) => {
       const file = uploadQueue[0]
       if (!file) return
-      setPublishing(true)
+      const title = meta.title
+      // Close the dialog right away — the upload continues in the background,
+      // so the user is free to keep browsing (YouTube-style).
+      setUploadQueue((q) => q.slice(1))
+      setUploading({ title, progress: 0, done: false })
+      notify({
+        kind: "upload",
+        title: t("up_started"),
+        body: t("up_started_body", { title }),
+      })
+
+      const started = Date.now()
+      const durationMs = Math.min(30000, Math.max(2500, file.size / 40000))
+      const timer = window.setInterval(() => {
+        const pct = Math.min(92, ((Date.now() - started) / durationMs) * 100)
+        setUploading((u) => (u && !u.done ? { ...u, progress: pct } : u))
+      }, 200)
+
       try {
         await api.uploadVideo(file, meta)
+        window.clearInterval(timer)
+        setUploading({ title, progress: 100, done: true })
+        notify({
+          kind: "success",
+          title: t("up_done"),
+          body: t("up_done_body", { title }),
+          system: true,
+        })
         await refresh()
         await reloadChannel()
-        setUploadQueue((q) => q.slice(1))
+        window.setTimeout(() => {
+          setUploading((u) => (u && u.done ? null : u))
+        }, 2600)
       } catch (e) {
-        setError(t("err_generic"))
+        window.clearInterval(timer)
+        setUploading(null)
+        notify({
+          kind: "error",
+          title: t("up_failed"),
+          body: t("up_failed_body", { title }),
+          system: true,
+        })
         console.error(e)
-      } finally {
-        setPublishing(false)
       }
     },
-    [uploadQueue, refresh, reloadChannel, t],
+    [uploadQueue, refresh, reloadChannel, t, notify],
   )
 
   const skipCurrent = useCallback(() => {
-    if (publishing) return
     setUploadQueue((q) => q.slice(1))
-  }, [publishing])
+  }, [])
 
   const handleDelete = useCallback(
     async (video: Video) => {
@@ -340,6 +425,8 @@ export default function App() {
         onOpenMyChannel={openMyChannel}
         onOpenSettings={() => setSettingsOpen(true)}
         onOpenAdmin={() => setAdminOpen(true)}
+        onToggleNotifs={() => setNotifsOpen((o) => !o)}
+        unread={unread}
         isAdmin={account.isAdmin}
         myName={myChannel?.name ?? account.name}
         myAvatar={myChannel?.avatar}
@@ -403,9 +490,11 @@ export default function App() {
             ) : (
               <div className="ch-empty">{t("loading_channel")}</div>
             )
+          ) : tab === "rules" ? (
+            <RulesPage />
           ) : (
             <>
-              {showUploadZone && <UploadZone onFiles={handleFiles} busy={publishing} />}
+              {showUploadZone && <UploadZone onFiles={handleFiles} busy={false} />}
 
               <section className="section">
                 <div className="section-head">
@@ -494,7 +583,7 @@ export default function App() {
         <UploadModal
           key={uploadQueue[0].name + uploadQueue.length}
           file={uploadQueue[0]}
-          publishing={publishing}
+          publishing={false}
           onPublish={publishCurrent}
           onCancel={skipCurrent}
         />
@@ -522,6 +611,10 @@ export default function App() {
       {adminOpen && account.isAdmin && (
         <AdminPanel onClose={() => setAdminOpen(false)} />
       )}
+
+      {notifsOpen && <NotificationsPanel onClose={() => setNotifsOpen(false)} />}
+      {uploading && <UploadStatus state={uploading} />}
+      <Toasts />
     </>
   )
 }

@@ -284,6 +284,52 @@ export const FiUserX = (p: IconProps) => (
   </Svg>
 )
 
+export const FiBell = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </Svg>
+)
+
+export const FiDownloadCloud = (p: IconProps) => (
+  <Svg {...p}>
+    <polyline points="8 17 12 21 16 17" />
+    <line x1="12" y1="12" x2="12" y2="21" />
+    <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+  </Svg>
+)
+
+export const FiDownload = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </Svg>
+)
+
+export const FiRefreshCw = (p: IconProps) => (
+  <Svg {...p}>
+    <polyline points="23 4 23 10 17 10" />
+    <polyline points="1 20 1 14 7 14" />
+    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+  </Svg>
+)
+
+export const FiCheckCircle = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </Svg>
+)
+
+export const FiAlertCircle = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </Svg>
+)
+
 /** Solid "verified" seal badge with a white check (color via CSS `color`). */
 export const VerifiedBadge = ({ size = 16, className }: IconProps) => (
   <svg

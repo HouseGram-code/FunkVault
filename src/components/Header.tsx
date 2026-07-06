@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import { FiSearch, FiUpload, FiSettings, FiShield } from "./icons"
+import { FiSearch, FiUpload, FiSettings, FiShield, FiBell } from "./icons"
 import { Arrows } from "./Arrows"
 import { useI18n } from "../i18n"
 
@@ -10,6 +10,8 @@ interface HeaderProps {
   onOpenMyChannel: () => void
   onOpenSettings: () => void
   onOpenAdmin?: () => void
+  onToggleNotifs: () => void
+  unread: number
   isAdmin?: boolean
   myName: string
   myAvatar?: string
@@ -22,6 +24,8 @@ export function Header({
   onOpenMyChannel,
   onOpenSettings,
   onOpenAdmin,
+  onToggleNotifs,
+  unread,
   isAdmin,
   myName,
   myAvatar,
@@ -60,6 +64,18 @@ export function Header({
         <button className="upload-btn" type="button" onClick={onUpload}>
           <FiUpload size={17} />
           {t("upload")}
+        </button>
+        <button
+          className="icon-btn notif-ic"
+          type="button"
+          title={t("notifs")}
+          aria-label={t("notifs")}
+          onClick={onToggleNotifs}
+        >
+          <FiBell size={19} />
+          {unread > 0 && (
+            <span className="notif-badge">{unread > 9 ? "9+" : unread}</span>
+          )}
         </button>
         {isAdmin && (
           <button

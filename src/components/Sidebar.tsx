@@ -8,6 +8,7 @@ import {
   FiHeart,
   FiZap,
   FiUsers,
+  FiShield,
 } from "./icons"
 import type { Tab } from "../types"
 import { useI18n } from "../i18n"
@@ -80,6 +81,19 @@ export function Sidebar({
           {t("your_channel")}
         </button>
         {YOU.map(renderItem)}
+      </div>
+      <div className="side-divider" />
+      <div className="nav-group">
+        <button
+          className={"nav-item" + (active === "rules" ? " active" : "")}
+          onClick={() => onChange("rules")}
+          type="button"
+        >
+          <span className="ic" aria-hidden>
+            <FiShield size={19} />
+          </span>
+          {t("rules")}
+        </button>
       </div>
       <div className="side-divider" />
       <div className="side-tip">
