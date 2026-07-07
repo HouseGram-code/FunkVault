@@ -307,4 +307,31 @@ returns void language sql as $$
 $$;
 grant execute on function public.increment_mod_downloads(uuid) to anon, authenticated;
 
+-- ---------------------------------------------------------------------------
+-- Mod updates (version history: each release has a changelog + a new zip).
+-- Zips live in the same public 'videos' bucket under a mods/ prefix.
+-- ---------------------------------------------------------------------------
+create table if not exists public.mod_updates (
+  id           uuid primary key default gen_random_uuid(),
+  mod_id       uuid not null references public.mods(id) on delete cascade,
+  version      text,
+  changelog    text,
+  zip_url      text not null,
+  zip_name     text,
+  zip_size     bigint not null default 0,
+  downloads    integer not null default 0,
+  created_at   timestamptz not null default now()
+);
+create index if not exists mod_updates_mod_idx on public.mod_updates (mod_id, created_at desc);
+
+alter table public.mod_updates enable row level security;
+drop policy if exists "fv mod_updates all" on public.mod_updates;
+create policy "fv mod_updates all" on public.mod_updates for all using (true) with check (true);
+
+create or replace function public.increment_mod_update_downloads(uid uuid)
+returns void language sql as $$
+  update public.mod_updates set downloads = downloads + 1 where id = uid;
+$$;
+grant execute on function public.increment_mod_update_downloads(uuid) to anon, authenticated;
+
 -- Done. Reload the app.

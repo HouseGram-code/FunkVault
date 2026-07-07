@@ -86,6 +86,22 @@ export interface Mod {
   ago: string
 }
 
+/** A version/update an author posts for their mod (changelog + new zip). */
+export interface ModUpdate {
+  id: string
+  modId: string
+  /** optional version label, e.g. "v1.2" */
+  version?: string
+  /** what's new in this release */
+  changelog?: string
+  /** public URL of this version's .zip */
+  zipUrl: string
+  zipName?: string
+  sizeBytes: number
+  downloads: number
+  ago: string
+}
+
 export type Tab =
   | "home"
   | "trending"

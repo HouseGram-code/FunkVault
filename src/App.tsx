@@ -73,6 +73,8 @@ export default function App() {
   const [uploadQueue, setUploadQueue] = useState<File[]>([])
   const [pendingFiles, setPendingFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState<UploadState | null>(null)
+  const [deepModId, setDeepModId] = useState<string | null>(null)
+  const [pendingVideoId, setPendingVideoId] = useState<string | null>(null)
 
   const uploadRef = useRef<HTMLInputElement>(null)
 
@@ -217,9 +219,42 @@ export default function App() {
       setPlayingId(video.id)
       void loadEng(video)
       void api.incrementView(video.id)
+      try {
+        window.history.replaceState(null, "", `#/video/${video.id}`)
+      } catch {
+        /* ignore */
+      }
     },
     [loadEng],
   )
+
+  // ---- deep links (shareable URLs for videos & mods) ------------------------
+  useEffect(() => {
+    const apply = () => {
+      const h = window.location.hash
+      const vm = /^#\/video\/(.+)$/.exec(h)
+      const mm = /^#\/mod\/(.+)$/.exec(h)
+      if (vm) {
+        setPendingVideoId(decodeURIComponent(vm[1]))
+      } else if (mm) {
+        setRoute({ type: "feed" })
+        setTab("mods")
+        setDeepModId(decodeURIComponent(mm[1]))
+      }
+    }
+    apply()
+    window.addEventListener("hashchange", apply)
+    return () => window.removeEventListener("hashchange", apply)
+  }, [])
+
+  useEffect(() => {
+    if (!pendingVideoId) return
+    const v = videos.find((x) => x.id === pendingVideoId)
+    if (v) {
+      openVideo(v)
+      setPendingVideoId(null)
+    }
+  }, [pendingVideoId, videos, openVideo])
 
   const allVideos = useMemo(() => {
     if (route.type === "channel" && channelData) {
@@ -492,7 +527,7 @@ export default function App() {
               <div className="ch-empty">{t("loading_channel")}</div>
             )
           ) : tab === "mods" ? (
-            <ModsPage />
+            <ModsPage deepModId={deepModId} onConsumeDeep={() => setDeepModId(null)} />
           ) : tab === "rules" ? (
             <RulesPage />
           ) : (
@@ -540,7 +575,18 @@ export default function App() {
         video={playing}
         videos={allVideos}
         engagement={playing ? engFor(playing.id) : DEFAULT_ENGAGEMENT}
-        onClose={() => setPlayingId(null)}
+        onClose={() => {
+          setPlayingId(null)
+          try {
+            window.history.replaceState(
+              null,
+              "",
+              window.location.pathname + window.location.search,
+            )
+          } catch {
+            /* ignore */
+          }
+        }}
         onSelect={(id) => {
           const v = allVideos.find((x) => x.id === id)
           if (v) openVideo(v)

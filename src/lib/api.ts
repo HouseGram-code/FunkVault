@@ -1,7 +1,7 @@
 import { supabase, VIDEO_BUCKET } from "./supabase"
 import { getActorId, currentName, getSession } from "./auth"
 import { captureThumbnail, formatDuration, titleFromFile } from "../utils"
-import type { Channel, Comment, Engagement, Mod, Video } from "../types"
+import type { Channel, Comment, Engagement, Mod, ModUpdate, Video } from "../types"
 
 const GRADS = [
   "linear-gradient(135deg,#ff2d8f,#a35bff)",
@@ -714,4 +714,78 @@ export async function uploadMod(input: ModUploadInput): Promise<Mod> {
 
 export async function incrementModDownload(id: string): Promise<void> {
   await supabase.rpc("increment_mod_downloads", { mid: id })
+}
+
+// ---------------------------------------------------------------------------
+// Mod updates (version history: changelog + new zip per release)
+// ---------------------------------------------------------------------------
+interface ModUpdateRow {
+  id: string
+  mod_id: string
+  version: string | null
+  changelog: string | null
+  zip_url: string
+  zip_name: string | null
+  zip_size: number
+  downloads: number
+  created_at: string
+}
+
+function mapModUpdate(r: ModUpdateRow): ModUpdate {
+  return {
+    id: r.id,
+    modId: r.mod_id,
+    version: r.version ?? undefined,
+    changelog: r.changelog ?? undefined,
+    zipUrl: r.zip_url,
+    zipName: r.zip_name ?? undefined,
+    sizeBytes: Number(r.zip_size ?? 0),
+    downloads: r.downloads ?? 0,
+    ago: relTime(r.created_at),
+  }
+}
+
+export async function listModUpdates(modId: string): Promise<ModUpdate[]> {
+  const { data, error } = await supabase
+    .from("mod_updates")
+    .select("*")
+    .eq("mod_id", modId)
+    .order("created_at", { ascending: false })
+  if (error) throw error
+  return ((data ?? []) as ModUpdateRow[]).map(mapModUpdate)
+}
+
+export interface ModUpdateInput {
+  modId: string
+  version?: string
+  changelog: string
+  zip: File
+  onProgress?: (pct: number) => void
+}
+
+/** Publish a new version of a mod (author only). Uploads the zip, inserts a row. */
+export async function addModUpdate(input: ModUpdateInput): Promise<ModUpdate> {
+  const actor = getActorId()
+  input.onProgress?.(10)
+  const zipUrl = await uploadPublic(input.zip, `mods/${actor}/updates`)
+  input.onProgress?.(85)
+  const { data, error } = await supabase
+    .from("mod_updates")
+    .insert({
+      mod_id: input.modId,
+      version: input.version?.trim() || null,
+      changelog: input.changelog.trim(),
+      zip_url: zipUrl,
+      zip_name: input.zip.name,
+      zip_size: input.zip.size,
+    })
+    .select("*")
+    .single()
+  if (error) throw error
+  input.onProgress?.(100)
+  return mapModUpdate(data as ModUpdateRow)
+}
+
+export async function incrementModUpdateDownload(id: string): Promise<void> {
+  await supabase.rpc("increment_mod_update_downloads", { uid: id })
 }

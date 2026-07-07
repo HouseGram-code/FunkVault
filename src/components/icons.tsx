@@ -330,6 +330,13 @@ export const FiAlertCircle = (p: IconProps) => (
   </Svg>
 )
 
+export const FiPlus = (p: IconProps) => (
+  <Svg {...p}>
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </Svg>
+)
+
 export const FiPackage = (p: IconProps) => (
   <Svg {...p}>
     <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />

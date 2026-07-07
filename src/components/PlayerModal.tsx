@@ -112,8 +112,9 @@ export function PlayerModal({
   const others = videos.filter((v) => v.id !== video.id)
 
   const share = () => {
+    const url = `${window.location.origin}${window.location.pathname}#/video/${video.id}`
     try {
-      navigator.clipboard?.writeText(window.location.href)
+      void navigator.clipboard?.writeText(url)
     } catch {
       /* clipboard may be unavailable */
     }
