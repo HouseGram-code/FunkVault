@@ -2296,3 +2296,43 @@ svg { display: block; }
 @media (max-width: 500px) {
   .mod-actions { flex-direction: column; }
 }
+
+/* Card overlay must not swallow control clicks (fixes delete button) */
+.play-overlay { pointer-events: none; }
+.card-del { z-index: 3; }
+
+/* Delete mod / delete update buttons */
+.mod-del-btn {
+  width: 100%; margin-top: 10px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(255, 92, 114, 0.1); color: #ff5c72;
+  border: 1px solid rgba(255, 92, 114, 0.35); border-radius: 12px;
+  padding: 11px; font-size: 14px; font-weight: 800; cursor: pointer;
+}
+.mod-del-btn:hover { background: rgba(255, 92, 114, 0.2); }
+.mu-btns { display: flex; align-items: center; gap: 8px; }
+.mu-del {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(255, 92, 114, 0.12); color: #ff5c72;
+  border: 1px solid rgba(255, 92, 114, 0.3); cursor: pointer;
+}
+.mu-del:hover { background: #ff5c72; color: #fff; }
+
+/* Settings: social / follow link */
+.set-social {
+  display: flex; align-items: center; gap: 14px;
+  text-decoration: none; color: #f4f2ff;
+  background: #16112b; border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px; padding: 12px 14px;
+  transition: border-color 0.14s, background 0.14s;
+}
+.set-social:hover { border-color: rgba(255, 255, 255, 0.22); background: #1c1636; }
+.set-social-x {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: grid; place-items: center; border-radius: 11px;
+  background: #000; color: #fff;
+}
+.set-social-info { display: flex; flex-direction: column; gap: 2px; }
+.set-social-info b { font-size: 15px; font-weight: 800; }
+.set-social-info span { font-size: 12.5px; color: #8b84a6; }

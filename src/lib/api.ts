@@ -789,3 +789,15 @@ export async function addModUpdate(input: ModUpdateInput): Promise<ModUpdate> {
 export async function incrementModUpdateDownload(id: string): Promise<void> {
   await supabase.rpc("increment_mod_update_downloads", { uid: id })
 }
+
+/** Delete a mod completely (its version updates cascade automatically). */
+export async function deleteMod(modId: string): Promise<void> {
+  const { error } = await supabase.from("mods").delete().eq("id", modId)
+  if (error) throw error
+}
+
+/** Delete a single mod version/update. */
+export async function deleteModUpdate(updateId: string): Promise<void> {
+  const { error } = await supabase.from("mod_updates").delete().eq("id", updateId)
+  if (error) throw error
+}

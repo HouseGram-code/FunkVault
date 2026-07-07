@@ -14,6 +14,7 @@ import {
   FiPackage,
   FiShare,
   FiPlus,
+  FiTrash2,
 } from "./icons"
 
 function formatBytes(bytes: number, mb: string): string {
@@ -65,6 +66,8 @@ function ModDetail({
   onDownloadUpdate,
   onShare,
   onPostUpdate,
+  onDeleteMod,
+  onDeleteUpdate,
 }: {
   mod: Mod
   mb: string
@@ -77,6 +80,8 @@ function ModDetail({
   onDownloadUpdate: (u: ModUpdate) => void
   onShare: () => void
   onPostUpdate: () => void
+  onDeleteMod: () => void
+  onDeleteUpdate: (u: ModUpdate) => void
 }) {
   const { t } = useI18n()
   const [active, setActive] = useState(0)
@@ -143,6 +148,11 @@ function ModDetail({
             <FiPlus size={16} /> {t("modupd_post")}
           </button>
         )}
+        {isOwner && (
+          <button className="mod-del-btn" type="button" onClick={onDeleteMod}>
+            <FiTrash2 size={16} /> {t("mod_delete")}
+          </button>
+        )}
         {mod.description && (
           <div className="mod-desc">
             <h4>{t("mod_description")}</h4>
@@ -176,9 +186,21 @@ function ModDetail({
                   <span className="mu-size">
                     {formatBytes(u.sizeBytes, mb)} · {u.downloads} {t("mod_downloads")}
                   </span>
-                  <button className="mu-dl" type="button" onClick={() => onDownloadUpdate(u)}>
-                    <FiDownload size={15} /> {t("modupd_dl")}
-                  </button>
+                  <div className="mu-btns">
+                    {isOwner && (
+                      <button
+                        className="mu-del"
+                        type="button"
+                        onClick={() => onDeleteUpdate(u)}
+                        aria-label={t("modupd_delete")}
+                      >
+                        <FiTrash2 size={14} />
+                      </button>
+                    )}
+                    <button className="mu-dl" type="button" onClick={() => onDownloadUpdate(u)}>
+                      <FiDownload size={15} /> {t("modupd_dl")}
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -309,6 +331,27 @@ export function ModsPage({
     window.setTimeout(() => setShared(false), 1600)
   }
 
+  const deleteMod = async (m: Mod) => {
+    if (!confirm(t("mod_delete_confirm", { title: m.title }))) return
+    try {
+      await api.deleteMod(m.id)
+      setMods((prev) => prev.filter((x) => x.id !== m.id))
+      goBack()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const deleteUpdate = async (u: ModUpdate) => {
+    if (!confirm(t("modupd_delete_confirm"))) return
+    try {
+      await api.deleteModUpdate(u.id)
+      setUpdates((prev) => prev.filter((x) => x.id !== u.id))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   if (selected) {
     const isOwner = getActorId() === selected.ownerId
     return (
@@ -325,6 +368,8 @@ export function ModsPage({
           onDownloadUpdate={downloadUpdate}
           onShare={() => shareMod(selected)}
           onPostUpdate={() => setUpdateOpen(true)}
+          onDeleteMod={() => deleteMod(selected)}
+          onDeleteUpdate={deleteUpdate}
         />
         {updateOpen && (
           <ModUpdateModal

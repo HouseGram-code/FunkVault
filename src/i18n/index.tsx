@@ -299,6 +299,12 @@ const EN: Dict = {
   modupd_latest: "Latest",
   modupd_pub_title: "Update published",
   modupd_pub_body: "A new version of “{title}” is now available.",
+  mod_delete: "Delete mod",
+  mod_delete_confirm: "Delete “{title}” and all its updates? This can't be undone.",
+  modupd_delete: "Delete update",
+  modupd_delete_confirm: "Delete this update? This can't be undone.",
+  set_follow: "Follow us",
+  set_follow_sub: "News & new mods on X",
 }
 
 const RU: Dict = {
@@ -580,6 +586,12 @@ const RU: Dict = {
   modupd_latest: "Последнее",
   modupd_pub_title: "Обновление опубликовано",
   modupd_pub_body: "Новая версия «{title}» теперь доступна.",
+  mod_delete: "Удалить мод",
+  mod_delete_confirm: "Удалить «{title}» и все его обновления? Это действие необратимо.",
+  modupd_delete: "Удалить обновление",
+  modupd_delete_confirm: "Удалить это обновление? Это действие необратимо.",
+  set_follow: "Мы в соцсетях",
+  set_follow_sub: "Новости и новые моды в X",
 }
 
 const DICTS: Record<Lang, Dict> = { en: EN, ru: RU }
