@@ -276,4 +276,35 @@ create policy "fv storage update"
 create policy "fv storage delete"
   on storage.objects for delete using (bucket_id = 'videos');
 
+-- ---------------------------------------------------------------------------
+-- Mods (community-uploaded FNF mods: downloadable zip + screenshots)
+-- Zip files and screenshots are stored in the existing public 'videos' bucket
+-- under a mods/ prefix, so no extra bucket setup is required.
+-- ---------------------------------------------------------------------------
+create table if not exists public.mods (
+  id           uuid primary key default gen_random_uuid(),
+  title        text not null,
+  description  text,
+  owner_id     text not null,
+  channel_id   uuid references public.channels(id) on delete set null,
+  author_name  text,
+  zip_url      text not null,
+  zip_name     text,
+  zip_size     bigint not null default 0,
+  screenshots  text[] not null default '{}',
+  downloads    integer not null default 0,
+  created_at   timestamptz not null default now()
+);
+create index if not exists mods_created_idx on public.mods (created_at desc);
+
+alter table public.mods enable row level security;
+drop policy if exists "fv mods all" on public.mods;
+create policy "fv mods all" on public.mods for all using (true) with check (true);
+
+create or replace function public.increment_mod_downloads(mid uuid)
+returns void language sql as $$
+  update public.mods set downloads = downloads + 1 where id = mid;
+$$;
+grant execute on function public.increment_mod_downloads(uuid) to anon, authenticated;
+
 -- Done. Reload the app.

@@ -66,6 +66,26 @@ export interface Engagement {
   comments: Comment[]
 }
 
+/** A community-uploaded FNF mod (zip download + screenshots). */
+export interface Mod {
+  id: string
+  title: string
+  description?: string
+  author: string
+  ownerId: string
+  channelId?: string
+  /** public URL of the downloadable .zip */
+  zipUrl?: string
+  /** original file name of the uploaded zip */
+  zipName?: string
+  /** zip size in bytes */
+  sizeBytes: number
+  /** public URLs of uploaded screenshots (at least 4) */
+  screenshots: string[]
+  downloads: number
+  ago: string
+}
+
 export type Tab =
   | "home"
   | "trending"
@@ -74,3 +94,4 @@ export type Tab =
   | "library"
   | "liked"
   | "rules"
+  | "mods"

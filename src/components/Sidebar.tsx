@@ -9,6 +9,7 @@ import {
   FiZap,
   FiUsers,
   FiShield,
+  FiPackage,
 } from "./icons"
 import type { Tab } from "../types"
 import { useI18n } from "../i18n"
@@ -27,6 +28,7 @@ const MAIN: Item[] = [
   { id: "home", icon: FiHome, key: "home" },
   { id: "trending", icon: FiTrendingUp, key: "trending" },
   { id: "subs", icon: FiVideo, key: "subscriptions" },
+  { id: "mods", icon: FiPackage, key: "mods_tab" },
 ]
 
 const YOU: Item[] = [

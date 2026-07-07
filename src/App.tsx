@@ -17,6 +17,7 @@ import { NotificationsPanel } from "./components/NotificationsPanel"
 import { UploadStatus } from "./components/UploadStatus"
 import type { UploadState } from "./components/UploadStatus"
 import { RulesPage } from "./components/RulesPage"
+import { ModsPage } from "./components/ModsPage"
 import { Arrows } from "./components/Arrows"
 import { useNotifications } from "./lib/notifications"
 import { checkForUpdate } from "./lib/update"
@@ -490,6 +491,8 @@ export default function App() {
             ) : (
               <div className="ch-empty">{t("loading_channel")}</div>
             )
+          ) : tab === "mods" ? (
+            <ModsPage />
           ) : tab === "rules" ? (
             <RulesPage />
           ) : (

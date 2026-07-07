@@ -1,7 +1,7 @@
 import { supabase, VIDEO_BUCKET } from "./supabase"
 import { getActorId, currentName, getSession } from "./auth"
 import { captureThumbnail, formatDuration, titleFromFile } from "../utils"
-import type { Channel, Comment, Engagement, Video } from "../types"
+import type { Channel, Comment, Engagement, Mod, Video } from "../types"
 
 const GRADS = [
   "linear-gradient(135deg,#ff2d8f,#a35bff)",
@@ -616,4 +616,102 @@ export async function adminStats(users: AdminUser[]): Promise<AdminStats> {
     videos: v.count ?? 0,
     channels: c.count ?? 0,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Mods (community-uploaded FNF mods: downloadable zip + screenshots)
+// ---------------------------------------------------------------------------
+interface ModRow {
+  id: string
+  title: string
+  description: string | null
+  owner_id: string
+  channel_id: string | null
+  author_name: string | null
+  zip_url: string
+  zip_name: string | null
+  zip_size: number
+  screenshots: string[] | null
+  downloads: number
+  created_at: string
+}
+
+function mapMod(r: ModRow): Mod {
+  return {
+    id: r.id,
+    title: r.title,
+    description: r.description ?? undefined,
+    author: r.author_name ?? "Anonymous",
+    ownerId: r.owner_id,
+    channelId: r.channel_id ?? undefined,
+    zipUrl: r.zip_url,
+    zipName: r.zip_name ?? undefined,
+    sizeBytes: Number(r.zip_size ?? 0),
+    screenshots: r.screenshots ?? [],
+    downloads: r.downloads ?? 0,
+    ago: relTime(r.created_at),
+  }
+}
+
+export async function listMods(): Promise<Mod[]> {
+  const { data, error } = await supabase
+    .from("mods")
+    .select("*")
+    .order("created_at", { ascending: false })
+  if (error) throw error
+  return ((data ?? []) as ModRow[]).map(mapMod)
+}
+
+export interface ModUploadInput {
+  title: string
+  description?: string
+  zip: File
+  screenshots: File[]
+  onProgress?: (pct: number) => void
+}
+
+/** Upload a mod: screenshots + zip go to storage, then a row is inserted. */
+export async function uploadMod(input: ModUploadInput): Promise<Mod> {
+  const actor = getActorId()
+  const channel = await getMyChannelRaw()
+  const author = channel?.name ?? currentName()
+
+  const total = input.screenshots.length + 1
+  let done = 0
+  const tick = () => {
+    done += 1
+    input.onProgress?.(Math.min(99, Math.round((done / total) * 100)))
+  }
+
+  const shots: string[] = []
+  for (const s of input.screenshots) {
+    const url = await uploadPublic(s, `mods/${actor}/shots`)
+    shots.push(url)
+    tick()
+  }
+  const zipUrl = await uploadPublic(input.zip, `mods/${actor}/zip`)
+  tick()
+
+  const { data, error } = await supabase
+    .from("mods")
+    .insert({
+      title: input.title.trim(),
+      description: input.description?.trim() || null,
+      owner_id: actor,
+      channel_id: channel?.id ?? null,
+      author_name: author,
+      zip_url: zipUrl,
+      zip_name: input.zip.name,
+      zip_size: input.zip.size,
+      screenshots: shots,
+    })
+    .select("*")
+    .single()
+  if (error) throw error
+  input.onProgress?.(100)
+  return mapMod(data as ModRow)
+}
+
+export async function incrementModDownload(id: string): Promise<void> {
+  await supabase.rpc("increment_mod_downloads", { mid: id })
 }
