@@ -2328,10 +2328,10 @@ svg { display: block; }
   transition: border-color 0.14s, background 0.14s;
 }
 .set-social:hover { border-color: rgba(255, 255, 255, 0.22); background: #1c1636; }
-.set-social-x {
+.set-social-tg {
   width: 40px; height: 40px; flex-shrink: 0;
   display: grid; place-items: center; border-radius: 11px;
-  background: #000; color: #fff;
+  background: linear-gradient(135deg, #2aabee, #229ed9); color: #fff;
 }
 .set-social-info { display: flex; flex-direction: column; gap: 2px; }
 .set-social-info b { font-size: 15px; font-weight: 800; }

@@ -11,7 +11,7 @@ import {
   FiDownloadCloud,
   FiDownload,
   FiRefreshCw,
-  BsTwitterX,
+  BsTelegram,
 } from "./icons"
 import { checkForUpdate, applyUpdate } from "../lib/update"
 import type { UpdateInfo } from "../lib/update"
@@ -214,19 +214,19 @@ export function SettingsModal({
 
         <div className="set-section">
           <div className="set-section-title">
-            <BsTwitterX size={16} /> {t("set_follow")}
+            <BsTelegram size={16} /> {t("set_follow")}
           </div>
           <a
             className="set-social"
-            href="https://x.com/FunkVaultDev"
+            href="https://t.me/FunkVaultNews"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="set-social-x">
-              <BsTwitterX size={18} />
+            <span className="set-social-tg">
+              <BsTelegram size={18} />
             </span>
             <span className="set-social-info">
-              <b>@FunkVaultDev</b>
+              <b>@FunkVaultNews</b>
               <span>{t("set_follow_sub")}</span>
             </span>
           </a>

@@ -303,15 +303,15 @@ const EN: Dict = {
   mod_delete_confirm: "Delete “{title}” and all its updates? This can't be undone.",
   modupd_delete: "Delete update",
   modupd_delete_confirm: "Delete this update? This can't be undone.",
-  set_follow: "Follow us",
-  set_follow_sub: "News & new mods on X",
+  set_follow: "Our channel",
+  set_follow_sub: "News & updates on Telegram",
 }
 
 const RU: Dict = {
   tagline: "Твоё хранилище видео Friday Night Funkin'",
   search_placeholder: "Поиск видео, модов, чартов...",
   search: "Найти",
-  upload: "Загрузить",
+  upload: "Заг��узить",
   your_channel: "Ваш канал",
   settings: "Настройки",
   language: "Язык",
@@ -590,8 +590,8 @@ const RU: Dict = {
   mod_delete_confirm: "Удалить «{title}» и все его обновления? Это действие необратимо.",
   modupd_delete: "Удалить обновление",
   modupd_delete_confirm: "Удалить это обновление? Это действие необратимо.",
-  set_follow: "Мы в соцсетях",
-  set_follow_sub: "Новости и новые моды в X",
+  set_follow: "Наш канал",
+  set_follow_sub: "Новости и обновления в Telegram",
 }
 
 const DICTS: Record<Lang, Dict> = { en: EN, ru: RU }
