@@ -245,6 +245,12 @@ const EN: Dict = {
   up_toobig_body: "Videos must be 250 MB or smaller.",
   up_uploading_chip: "Uploading",
   up_limit_hint: "Up to 250 MB",
+  up_bg_started: "Uploading in background",
+  up_bg_body: "“{title}” is uploading. You can close the site — it will finish in the background and notify you.",
+  mod_bg_started: "Uploading mod in background",
+  mod_bg_body: "Your mod is uploading. You can close the site — it will finish in the background.",
+  mod_upload_failed: "Mod upload failed",
+  mod_upload_failed_body: "“{title}” could not be uploaded. Please try again.",
 
   // Mods
   mods_tab: "Mods",
@@ -532,6 +538,12 @@ const RU: Dict = {
   up_toobig_body: "Видео должно быть не больше 250 МБ.",
   up_uploading_chip: "Загрузка",
   up_limit_hint: "До 250 МБ",
+  up_bg_started: "Загрузка в фоне",
+  up_bg_body: "«{title}» загружается. Можно закрыть сайт — загрузка завершится в фоне, и придёт уведомление.",
+  mod_bg_started: "Загрузка мода в фоне",
+  mod_bg_body: "Мод загружается. Можно закрыть сайт — загрузка завершится в фоне.",
+  mod_upload_failed: "Не удалось загрузить мод",
+  mod_upload_failed_body: "Не удалось загрузить «{title}». Попробуйте ещё раз.",
 
   // Моды
   mods_tab: "Моды",

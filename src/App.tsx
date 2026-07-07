@@ -23,6 +23,7 @@ import { useNotifications } from "./lib/notifications"
 import { checkForUpdate } from "./lib/update"
 import * as api from "./lib/api"
 import type { ChannelEdit, UploadMeta } from "./lib/api"
+import { queueVideoUpload, onBackgroundMessage } from "./lib/bgupload"
 import { getSession, clearSession, refreshAccount } from "./lib/auth"
 import type { Account } from "./lib/auth"
 import { useI18n } from "./i18n"
@@ -42,7 +43,7 @@ type MyChannel = { id: string; name: string; avatar?: string } | null
 
 export default function App() {
   const { t } = useI18n()
-  const { notify, unread } = useNotifications()
+  const { notify, unread, requestPermission } = useNotifications()
 
   const [account, setAccount] = useState<Account | null>(() => getSession())
 
@@ -309,6 +310,27 @@ export default function App() {
       // Close the dialog right away — the upload continues in the background,
       // so the user is free to keep browsing (YouTube-style).
       setUploadQueue((q) => q.slice(1))
+      void requestPermission()
+
+      // Prefer a Service-Worker background upload: it finishes even if the user
+      // leaves or closes the site, and fires a notification when it's done.
+      const queued = await queueVideoUpload(file, meta, {
+        doneTitle: t("up_done"),
+        doneBody: t("up_done_body", { title }),
+        failTitle: t("up_failed"),
+        failBody: t("up_failed_body", { title }),
+      })
+      if (queued) {
+        notify({
+          kind: "upload",
+          title: t("up_bg_started"),
+          body: t("up_bg_body", { title }),
+          system: true,
+        })
+        return
+      }
+
+      // Fallback (browsers without Background Sync): upload in-page.
       setUploading({ title, progress: 0, done: false })
       notify({
         kind: "upload",
@@ -352,6 +374,16 @@ export default function App() {
     },
     [uploadQueue, refresh, reloadChannel, t, notify],
   )
+
+  // When a Service-Worker background upload finishes, refresh the feed.
+  useEffect(() => {
+    return onBackgroundMessage((m) => {
+      if (m.type === "bg-upload-done" && m.kind === "video") {
+        void refresh()
+        void reloadChannel()
+      }
+    })
+  }, [refresh, reloadChannel])
 
   const skipCurrent = useCallback(() => {
     setUploadQueue((q) => q.slice(1))

@@ -3,6 +3,7 @@ import type { CSSProperties } from "react"
 import { useI18n } from "../i18n"
 import { useNotifications } from "../lib/notifications"
 import * as api from "../lib/api"
+import { queueModUpload } from "../lib/bgupload"
 import { FiX, FiUpload, FiImage, FiPackage, FiTrash2 } from "./icons"
 
 const MAX_ZIP = 150 * 1024 * 1024
@@ -15,7 +16,7 @@ interface Props {
 
 export function ModUploadModal({ onClose, onUploaded }: Props) {
   const { t } = useI18n()
-  const { notify } = useNotifications()
+  const { notify, requestPermission } = useNotifications()
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [zip, setZip] = useState<File | null>(null)
@@ -66,7 +67,35 @@ export function ModUploadModal({ onClose, onUploaded }: Props) {
     setBusy(true)
     setError(null)
     setProgress(0)
+    void requestPermission()
     try {
+      // Prefer a Service-Worker background upload so it finishes even if the
+      // user closes the site; fall back to an in-page upload otherwise.
+      const queued = await queueModUpload(
+        {
+          title: title.trim(),
+          description: description.trim() || undefined,
+          zip,
+          screenshots: shots,
+        },
+        {
+          doneTitle: t("mod_published"),
+          doneBody: t("mod_published_body", { title: title.trim() }),
+          failTitle: t("mod_upload_failed"),
+          failBody: t("mod_upload_failed_body", { title: title.trim() }),
+        },
+      )
+      if (queued) {
+        notify({
+          kind: "upload",
+          title: t("mod_bg_started"),
+          body: t("mod_bg_body"),
+          system: true,
+        })
+        await onUploaded()
+        onClose()
+        return
+      }
       await api.uploadMod({
         title: title.trim(),
         description: description.trim() || undefined,

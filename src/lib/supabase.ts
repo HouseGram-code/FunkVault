@@ -14,6 +14,10 @@ const anonKey =
   (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim() ||
   FALLBACK_ANON_KEY
 
+/** Exposed for the background-upload Service Worker (public anon values). */
+export const SUPABASE_URL = url
+export const SUPABASE_ANON_KEY = anonKey
+
 /** Browser Supabase client. Uses the PUBLISHABLE (anon) key only. */
 export const supabase = createClient(url, anonKey, {
   auth: { persistSession: false },

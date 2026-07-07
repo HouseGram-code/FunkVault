@@ -14,6 +14,7 @@ import {
   showSystemNotification,
 } from "./notify"
 import type { Permission } from "./notify"
+import { onBackgroundMessage } from "./bgupload"
 
 export type NotifKind = "info" | "success" | "error" | "upload" | "update"
 
@@ -118,6 +119,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     },
     [dismissToast],
   )
+
+  // Surface background (Service Worker) upload results as notifications, even
+  // when they finish after the user navigated away and came back.
+  useEffect(() => {
+    return onBackgroundMessage((m) => {
+      notify({
+        kind: m.type === "bg-upload-done" ? "success" : "error",
+        title: m.title || "",
+        body: m.body,
+        system: false,
+      })
+    })
+  }, [notify])
 
   const markAllRead = useCallback(() => {
     setItems((prev) => prev.map((i) => (i.read ? i : { ...i, read: true })))

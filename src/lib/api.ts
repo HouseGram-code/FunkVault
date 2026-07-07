@@ -1,4 +1,4 @@
-import { supabase, VIDEO_BUCKET } from "./supabase"
+import { supabase, VIDEO_BUCKET, SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase"
 import { getActorId, currentName, getSession } from "./auth"
 import { captureThumbnail, formatDuration, titleFromFile } from "../utils"
 import type { Channel, Comment, Engagement, Mod, ModUpdate, Video } from "../types"
@@ -800,4 +800,156 @@ export async function deleteMod(modId: string): Promise<void> {
 export async function deleteModUpdate(updateId: string): Promise<void> {
   const { error } = await supabase.from("mod_updates").delete().eq("id", updateId)
   if (error) throw error
+}
+
+// ---------------------------------------------------------------------------
+// Background upload jobs (handed to the Service Worker via Background Sync so
+// uploads finish even if the user closes the site). See src/lib/bgupload.ts.
+// ---------------------------------------------------------------------------
+export interface BgJobFile {
+  field: string
+  index?: number
+  path: string
+  blob: Blob
+  contentType: string
+}
+
+export interface BgJobText {
+  doneTitle: string
+  doneBody: string
+  failTitle: string
+  failBody: string
+}
+
+export interface BgJob {
+  id: string
+  kind: "video" | "mod"
+  title: string
+  bucket: string
+  table: string
+  supaUrl: string
+  anonKey: string
+  files: BgJobFile[]
+  row: Record<string, unknown>
+  text: BgJobText
+}
+
+function bgSafe(name: string): string {
+  return name.replace(/[^a-zA-Z0-9._-]/g, "_")
+}
+function bgPath(prefix: string, name: string): string {
+  return `${prefix}/${Date.now()}-${bgSafe(name)}`
+}
+function bgId(p: string): string {
+  return `${p}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/** Build a background upload job for a video (captures the thumbnail up front). */
+export async function prepareVideoJob(
+  file: File,
+  meta: UploadMeta,
+  text: BgJobText,
+): Promise<BgJob> {
+  const channel = await getMyChannelRaw()
+  if (!channel) throw new Error("no_channel")
+  const actor = getActorId()
+  const { thumb: captured, duration } = await captureThumbnail(file)
+
+  const files: BgJobFile[] = []
+  const videoPath = bgPath(actor, file.name)
+  files.push({
+    field: "video",
+    path: videoPath,
+    blob: file,
+    contentType: file.type || "video/mp4",
+  })
+
+  let thumb: string | null = captured ?? null
+  if (meta.thumbFile) {
+    const tp = bgPath(`channels/${channel.id}/thumbs`, meta.thumbFile.name)
+    files.push({
+      field: "thumb",
+      path: tp,
+      blob: meta.thumbFile,
+      contentType: meta.thumbFile.type || "image/jpeg",
+    })
+    thumb = null
+  }
+
+  const tags = (meta.tags ?? []).map((s) => s.trim()).filter(Boolean).slice(0, 12)
+  const row: Record<string, unknown> = {
+    title: meta.title.trim() || titleFromFile(file.name),
+    channel: channel.name,
+    channel_id: channel.id,
+    owner_id: actor,
+    duration: formatDuration(duration),
+    storage_path: videoPath,
+    thumb,
+    grad: GRADS[Math.floor(Math.random() * GRADS.length)],
+    description: meta.description?.trim() || null,
+    tags,
+  }
+
+  return {
+    id: bgId("v"),
+    kind: "video",
+    title: (row.title as string) || file.name,
+    bucket: VIDEO_BUCKET,
+    table: "videos",
+    supaUrl: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+    files,
+    row,
+    text,
+  }
+}
+
+/** Build a background upload job for a mod (screenshots + zip). */
+export async function prepareModJob(
+  input: ModUploadInput,
+  text: BgJobText,
+): Promise<BgJob> {
+  const actor = getActorId()
+  const channel = await getMyChannelRaw()
+  const author = channel?.name ?? currentName()
+
+  const files: BgJobFile[] = []
+  input.screenshots.forEach((s, i) => {
+    files.push({
+      field: "shot",
+      index: i,
+      path: bgPath(`mods/${actor}/shots`, s.name),
+      blob: s,
+      contentType: s.type || "application/octet-stream",
+    })
+  })
+  files.push({
+    field: "zip",
+    path: bgPath(`mods/${actor}/zip`, input.zip.name),
+    blob: input.zip,
+    contentType: input.zip.type || "application/zip",
+  })
+
+  const row: Record<string, unknown> = {
+    title: input.title.trim(),
+    description: input.description?.trim() || null,
+    owner_id: actor,
+    channel_id: channel?.id ?? null,
+    author_name: author,
+    zip_name: input.zip.name,
+    zip_size: input.zip.size,
+  }
+
+  return {
+    id: bgId("m"),
+    kind: "mod",
+    title: input.title.trim(),
+    bucket: VIDEO_BUCKET,
+    table: "mods",
+    supaUrl: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+    files,
+    row,
+    text,
+  }
 }

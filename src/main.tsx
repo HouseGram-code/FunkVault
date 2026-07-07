@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import App from "./App"
 import { I18nProvider } from "./i18n"
 import { NotificationsProvider } from "./lib/notifications"
+import { registerBackgroundWorker } from "./lib/bgupload"
 import "./styles.css"
 
 const el = document.getElementById("root")
@@ -17,3 +18,5 @@ createRoot(el).render(
     </I18nProvider>
   </StrictMode>,
 )
+
+registerBackgroundWorker()

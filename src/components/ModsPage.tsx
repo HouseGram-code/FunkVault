@@ -4,6 +4,7 @@ import * as api from "../lib/api"
 import type { Mod, ModUpdate } from "../types"
 import { useI18n } from "../i18n"
 import { getActorId } from "../lib/auth"
+import { onBackgroundMessage } from "../lib/bgupload"
 import { ModUploadModal } from "./ModUploadModal"
 import { ModUpdateModal } from "./ModUpdateModal"
 import {
@@ -241,6 +242,13 @@ export function ModsPage({
 
   useEffect(() => {
     void load()
+  }, [load])
+
+  // Refresh the list when a background mod upload completes.
+  useEffect(() => {
+    return onBackgroundMessage((m) => {
+      if (m.type === "bg-upload-done" && m.kind === "mod") void load()
+    })
   }, [load])
 
   // Open a mod directly from a shared link (#/mod/<id>).
