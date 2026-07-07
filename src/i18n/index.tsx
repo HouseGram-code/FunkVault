@@ -311,7 +311,7 @@ const RU: Dict = {
   tagline: "Твоё хранилище видео Friday Night Funkin'",
   search_placeholder: "Поиск видео, модов, чартов...",
   search: "Найти",
-  upload: "Заг��узить",
+  upload: "Загрузить",
   your_channel: "Ваш канал",
   settings: "Настройки",
   language: "Язык",
@@ -420,7 +420,7 @@ const RU: Dict = {
 
   cc_title: "Создание канала",
   cc_name: "Название канала",
-  cc_name_ph: "нап��имер, Boyfriend Beats",
+  cc_name_ph: "например, Boyfriend Beats",
   cc_username: "Юзернейм",
   cc_username_ph: "yourname",
   cc_available: "Свободно",
@@ -436,7 +436,7 @@ const RU: Dict = {
 
   views: "просмотров",
   subscribe: "Подписаться",
-  subscribed: "Вы подписан��",
+  subscribed: "Вы подписаны",
   share: "Поделиться",
   copied: "Скопировано!",
   comment_one: "комментарий",
