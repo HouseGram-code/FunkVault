@@ -1,4 +1,4 @@
-import { FiHome, FiTrendingUp, FiVideo, FiUsers, FiUpload } from "./icons"
+import { FiHome, FiTrendingUp, FiVideo, FiUsers, FiUpload, FiPackage } from "./icons"
 import type { Tab } from "../types"
 import { useI18n } from "../i18n"
 
@@ -37,6 +37,14 @@ export function MobileNav({
       >
         <FiTrendingUp size={21} />
         <span>{t("nav_trending")}</span>
+      </button>
+      <button
+        className={"mn-item" + (tabOn("mods") ? " on" : "")}
+        type="button"
+        onClick={() => onChange("mods")}
+      >
+        <FiPackage size={21} />
+        <span>{t("nav_mods")}</span>
       </button>
       <button
         className="mn-item mn-upload"

@@ -175,6 +175,7 @@ const EN: Dict = {
   nav_home: "Home",
   nav_trending: "Trending",
   nav_subs: "Subs",
+  nav_mods: "Mods",
   nav_you: "You",
 
   // Admin panel
@@ -417,7 +418,7 @@ const RU: Dict = {
   loading_channel: "Загрузка канала…",
   empty_owner: "Вы ещё не загрузили ни одного видео.",
   empty_other: "На этом канале пока нет видео.",
-  subscriber: "подписчи��",
+  subscriber: "подписчик",
   subscribers: "подписчиков",
   video_one: "видео",
   video_many: "видео",
@@ -470,6 +471,7 @@ const RU: Dict = {
   nav_home: "Главная",
   nav_trending: "Тренды",
   nav_subs: "Подписки",
+  nav_mods: "Моды",
   nav_you: "Вы",
 
   // Admin panel
