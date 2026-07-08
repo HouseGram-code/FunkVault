@@ -2383,3 +2383,79 @@ svg { display: block; }
   .mn-item { font-size: 9.5px; }
   .mn-item span { font-size: 9.5px; }
 }
+
+/* ============================================================
+   v1.0.1 — Update banner (real, working “Update now” button)
+   Fixed bar that appears for everyone when a newer build is live.
+   ============================================================ */
+.update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 120;
+  width: min(560px, calc(100vw - 28px));
+  background: rgba(20, 16, 38, 0.98);
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.14));
+  border-radius: 16px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(163, 91, 255, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow: hidden;
+  animation: ub-in 0.28s ease;
+}
+@keyframes ub-in {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.ub-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px; }
+.ub-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  background: #35d67f;
+  box-shadow: 0 0 0 0 rgba(53, 214, 127, 0.6);
+  animation: ub-pulse 1.8s infinite;
+}
+@keyframes ub-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(53, 214, 127, 0.55); }
+  70%  { box-shadow: 0 0 0 9px rgba(53, 214, 127, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(53, 214, 127, 0); }
+}
+.ub-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.ub-title { font-size: 14.5px; font-weight: 900; color: #f4f2ff; }
+.ub-sub {
+  font-size: 12.5px; color: #b6b0cc;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ub-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ub-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #ff2d8f, #a35bff);
+  color: #fff; border: none; border-radius: 11px;
+  padding: 11px 18px; font-size: 14px; font-weight: 800; cursor: pointer;
+  white-space: nowrap; transition: filter 0.12s, transform 0.12s;
+}
+.ub-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.ub-btn:disabled { cursor: default; opacity: 0.9; }
+.ub-later {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06); color: #b6b0cc;
+  border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer;
+}
+.ub-later:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.ub-spin { animation: ub-rot 0.9s linear infinite; }
+@keyframes ub-rot { to { transform: rotate(360deg); } }
+.ub-track { height: 4px; background: rgba(255, 255, 255, 0.08); }
+.ub-fill {
+  height: 100%; background: linear-gradient(90deg, #ff2d8f, #a35bff);
+  transition: width 0.12s ease;
+}
+
+/* Lift the banner above the mobile bottom nav on phones */
+@media (max-width: 900px) {
+  .update-banner { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 600px) {
+  .ub-inner { flex-wrap: wrap; gap: 10px; }
+  .ub-btn { flex: 1; justify-content: center; }
+}

@@ -15,6 +15,7 @@ import { MobileNav } from "./components/MobileNav"
 import { Toasts } from "./components/Toasts"
 import { NotificationsPanel } from "./components/NotificationsPanel"
 import { UploadStatus } from "./components/UploadStatus"
+import { UpdateBanner } from "./components/UpdateBanner"
 import type { UploadState } from "./components/UploadStatus"
 import { RulesPage } from "./components/RulesPage"
 import { ModsPage } from "./components/ModsPage"
@@ -695,6 +696,7 @@ export default function App() {
 
       {notifsOpen && <NotificationsPanel onClose={() => setNotifsOpen(false)} />}
       {uploading && <UploadStatus state={uploading} />}
+      <UpdateBanner />
       <Toasts />
     </>
   )

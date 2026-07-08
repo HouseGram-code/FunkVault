@@ -214,6 +214,8 @@ const EN: Dict = {
   upd_fixed: "Fixed",
   upd_empty: "Update",
   upd_reload_note: "The app will reload automatically after updating.",
+  upd_new_version: "New version {v} is available",
+  upd_later: "Later",
   mb: "MB",
 
   // Rules
@@ -415,7 +417,7 @@ const RU: Dict = {
   loading_channel: "Загрузка канала…",
   empty_owner: "Вы ещё не загрузили ни одного видео.",
   empty_other: "На этом канале пока нет видео.",
-  subscriber: "подписчик",
+  subscriber: "подписчи��",
   subscribers: "подписчиков",
   video_one: "видео",
   video_many: "видео",
@@ -507,6 +509,8 @@ const RU: Dict = {
   upd_fixed: "Исправлено",
   upd_empty: "обновление",
   upd_reload_note: "После обновления сайт перезагрузится автоматически.",
+  upd_new_version: "Доступна новая версия {v}",
+  upd_later: "Позже",
   mb: "МБ",
 
   // Правила
