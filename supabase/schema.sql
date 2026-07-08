@@ -335,3 +335,19 @@ $$;
 grant execute on function public.increment_mod_update_downloads(uuid) to anon, authenticated;
 
 -- Done. Reload the app.
+
+-- ---------------------------------------------------------------------------
+-- Release sync: v1.0.1-beta (2026-07-08)
+-- This is a frontend-only release (mobile UI refinements + version bump).
+-- The schema below is unchanged and fully idempotent — it is safe to re-run.
+-- Recommended: re-run this file in Supabase (SQL Editor) after each deploy so
+-- the database stays in sync with the app. The block below re-asserts the
+-- columns the app relies on, so an older database is brought up to date safely.
+-- ---------------------------------------------------------------------------
+alter table public.mods        add column if not exists zip_name text;
+alter table public.mods        add column if not exists author_name text;
+alter table public.mods        add column if not exists screenshots text[] not null default '{}';
+alter table public.mod_updates add column if not exists version text;
+alter table public.mod_updates add column if not exists changelog text;
+alter table public.mod_updates add column if not exists zip_name text;
+-- Done. Reload the app.

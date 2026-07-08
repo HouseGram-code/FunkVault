@@ -208,7 +208,7 @@ export function SettingsModal({
             <FiZap size={17} /> {t("about")}
           </div>
           <p className="set-version">
-            FunkVault <span className="set-ver-badge">{t("version")}</span>
+            FunkVault <span className="set-ver-badge">{APP_VERSION}</span>
           </p>
         </div>
 

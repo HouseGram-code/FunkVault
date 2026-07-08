@@ -2336,3 +2336,50 @@ svg { display: block; }
 .set-social-info { display: flex; flex-direction: column; gap: 2px; }
 .set-social-info b { font-size: 15px; font-weight: 800; }
 .set-social-info span { font-size: 12.5px; color: #8b84a6; }
+
+/* ============================================================
+   v1.0.1 — Mobile (Android / iOS) refinements
+   Make every mod control & button fit small screens.
+   ============================================================ */
+@media (max-width: 600px) {
+  /* Mods listing header: stack title + full-width upload button */
+  .mods-head { flex-direction: column; align-items: stretch; gap: 12px; }
+  .mods-upload-btn { width: 100%; justify-content: center; padding: 12px 16px; font-size: 15px; }
+
+  /* Tighter, fuller mod grid on phones */
+  .mod-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 14px; }
+  .mod-card-body { padding: 10px 11px 12px; }
+  .mod-card-title { font-size: 14px; }
+
+  /* Detail view */
+  .mod-detail { gap: 18px; }
+  .mod-h2 { font-size: 20px; }
+  .mod-stats { gap: 8px; }
+  .mod-stat { padding: 10px 6px; }
+  .mod-stat b { font-size: 15px; }
+  .mod-thumb { width: 72px; height: 46px; }
+
+  /* Owner action buttons: comfortable tap targets */
+  .mod-dl-btn { padding: 13px; font-size: 15px; }
+  .mod-post-btn, .mod-del-btn { padding: 12px; }
+
+  /* Version-history rows: let buttons breathe & wrap cleanly */
+  .mu-item { padding: 12px 13px; }
+  .mu-foot { flex-direction: column; align-items: stretch; gap: 10px; }
+  .mu-btns { justify-content: flex-end; }
+  .mu-dl { flex: 1; justify-content: center; padding: 10px 15px; }
+}
+
+/* Stacked mod actions need real height on the share button */
+@media (max-width: 500px) {
+  .mod-share-btn { padding: 12px 18px; }
+}
+
+/* Very small phones (older Android / iPhone SE) */
+@media (max-width: 400px) {
+  .mod-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mod-stats { flex-wrap: wrap; }
+  .mod-stat { flex: 1 1 40%; }
+  .mn-item { font-size: 9.5px; }
+  .mn-item span { font-size: 9.5px; }
+}

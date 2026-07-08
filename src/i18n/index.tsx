@@ -195,7 +195,7 @@ const EN: Dict = {
 
   // Settings / about
   about: "About",
-  version: "v1.0 beta",
+  version: "v1.0.1 beta",
 
   // Updates
   upd_section: "Updates",
@@ -488,7 +488,7 @@ const RU: Dict = {
 
   // Settings / about
   about: "О приложении",
-  version: "v1.0 бета",
+  version: "v1.0.1 бета",
 
   // Обновления
   upd_section: "Обновления",
